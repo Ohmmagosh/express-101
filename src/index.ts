@@ -1,11 +1,14 @@
 import mongoose from "mongoose";
 import express from "express";
 import dontenv from "dotenv";
+import cors from "cors";
 
 async function start() {
   try {
     dontenv.config();
     const app = express();
+
+    app.use(cors());
     app.use(express.json());
 
     const mongoURI: string | undefined = process.env.MONGO_URI;
