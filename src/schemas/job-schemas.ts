@@ -12,8 +12,8 @@ export type TJob = {
 export const jobSchema = new Schema<TJob>({
     name: { type: String, required: true },
     description: { type: String, required: true },
-    create_at: { type: Date, required: true },
-    update_at: { type: Date, required: true },
+    create_at: { type: Date, default: Date.now },
+    update_at: { type: Date, default: Date.now },
     end_at: { type: Date, required: true },
     user_id: { type: [String], default: [] },
 });
