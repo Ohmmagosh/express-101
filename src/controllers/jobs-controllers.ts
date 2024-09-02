@@ -55,6 +55,8 @@ export const createJob = async (req: any, res: any) => {
       description,
       end_at,
       user_id,
+      create_at: new Date(),
+      update_at: new Date(),
     });
     await job.save();
     res.send("Job created successfully");
@@ -77,6 +79,7 @@ export const updateJob = async (req: any, res: any) => {
     }
     job.name = name;
     job.description = description;
+    job.update_at = new Date(Date.now());
     job.end_at = end_at;
     job.user_id = user_id;
     await job.save();
