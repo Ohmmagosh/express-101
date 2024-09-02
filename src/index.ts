@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import express from "express";
 import dontenv from "dotenv";
 import cors from "cors";
+import { logger } from "./middleware/logger";
 
 async function start() {
   try {
@@ -10,6 +11,7 @@ async function start() {
 
     app.use(cors());
     app.use(express.json());
+    app.use(logger);
 
     const mongoURI: string | undefined = process.env.MONGO_URI;
     const mongoDB: string | undefined = process.env.MONGO_DB;
@@ -22,6 +24,7 @@ async function start() {
       res.send("service is alive");
     });
     app.use("/users", require("./routes/user").router);
+    app.use("/jobs", require("./routes/job").router);
 
     app.listen(PORT, async () => {
       await mongoose.connect(mongoURI! +"/"+ mongoDB! + "?authSource=admin");
