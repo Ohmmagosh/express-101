@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
-import { TJob } from "../schemas/job-schemas";
+import { IJob, Job as JobModel } from "../schemas/job-schemas";
 
 export const getAllJobs = async (req: any, res: any) => {
   try {
-    const JobModel = mongoose.model("Job");
     const jobs = await JobModel.find();
     res.json(jobs);
   } catch (error) {
@@ -40,16 +39,11 @@ export const createJob = async (req: any, res: any) => {
       description,
       end_at,
       user_id,
-    }: Omit<TJob, "create_at" | "update_at"> = req.body;
+    }: Omit<IJob, "create_at" | "update_at"> = req.body;
     if (!name) {
       return res.status(400).send("Invalid request");
     }
-    const JobModel = mongoose.model("Job");
 
-    const jobExist = await JobModel.findOne({ name });
-    if (jobExist) {
-      return res.status(400).send("Job already exist");
-    }
     const job = new JobModel({
       name,
       description,
@@ -68,7 +62,6 @@ export const createJob = async (req: any, res: any) => {
 
 export const updateJob = async (req: any, res: any) => {
   try {
-    const JobModel = mongoose.model("Job");
     const { id, name, description, end_at, user_id }: TJob & {id: string} = req.body;
     if (!id) {
       return res.status(400).send("Invalid request");
@@ -92,7 +85,6 @@ export const updateJob = async (req: any, res: any) => {
 
 export const deleteJob = async (req: any, res: any) => {
   try {
-    const JobModel = mongoose.model("Job");
     const { id }: { id: string } = req.query;
     if (!id) {
       return res.status(400).send("Invalid request");

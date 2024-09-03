@@ -16,3 +16,5 @@ router.get("/:id", getJobById);
 router.post("/create", createJob);
 
 router.patch("/update", updateJob);
+
+router.delete("/delete", deleteJob);
