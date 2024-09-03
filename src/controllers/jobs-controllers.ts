@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { IJob, Job as JobModel } from "../schemas/job-schemas";
+import { IUser, Users } from "../schemas/user-schemas";
 
 export const getAllJobs = async (req: any, res: any) => {
   try {
@@ -62,7 +63,7 @@ export const createJob = async (req: any, res: any) => {
 
 export const updateJob = async (req: any, res: any) => {
   try {
-    const { id, name, description, end_at, user_id }: TJob & {id: string} = req.body;
+    const { id, name, description, end_at }: Omit<IJob, 'user_id'> & {id: string} = req.body;
     if (!id) {
       return res.status(400).send("Invalid request");
     }
@@ -74,7 +75,7 @@ export const updateJob = async (req: any, res: any) => {
     job.description = description;
     job.update_at = new Date(Date.now());
     job.end_at = end_at;
-    job.user_id = user_id;
+
     await job.save();
     res.send("Job updated successfully");
   } catch (error) {
@@ -97,3 +98,26 @@ export const deleteJob = async (req: any, res: any) => {
   }
 };
 
+
+export const addUsersToJob = async (req: any, res: any) => {
+  try {
+    const { id, user_id }: { id: string; user_id: string } = req.body;
+    if (!id || !user_id) {
+      return res.status(400).send("Invalid request");
+    }
+    const job = await JobModel.findById(id);
+    if (!job) {
+      return res.status(404).send("Job not found");
+    }
+    const user: IUser & {_id: mongoose.Schema.Types.ObjectId} | null = await Users.findById(user_id);
+
+    !user && res.status(404).send("User not found");
+    
+    job.user_id.push(user!._id);
+    await job.save();
+    res.send("User added to job successfully");
+  } catch (error) {
+    console.log("Error : ", error);
+    res.status(500).send("An error occured");
+  }
+}

@@ -6,7 +6,7 @@ export interface IJob extends Document {
     create_at: Date;
     update_at: Date;
     end_at: Date;
-    user_id: string[];
+    user_id: mongoose.Schema.Types.ObjectId[];
 }
 
 export const jobSchema = new Schema<IJob>({
@@ -18,19 +18,6 @@ export const jobSchema = new Schema<IJob>({
     user_id: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
 });
 
-export const postCreateSchema = new Schema<IJob>({
-    name: { type: String, required: true , unique: true, validate: {
-        validator: async (v: string): Promise<boolean> => {
-            const Job = mongoose.model<IJob>('Job', jobSchema);
-            const jobExist = await Job.findOne({ name: v });
-            return !jobExist;
-        },
-        message: '{VALUE} is already taken',
-    }},
-    description: { type: String, required: true },
-    end_at: { type: Date, required: true },
-    user_id: { type: [String], default: [] },
-});
 
 
 export const Job = mongoose.model<IJob>('Job', jobSchema);
