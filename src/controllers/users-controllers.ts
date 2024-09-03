@@ -77,25 +77,16 @@ export async function createUser(req: any, res: any) {
     if (!username || !email || !age) {
       return res.status(400).send("Invalid request");
     }
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(400).send("User already exists");
-    }
 
     const user = new User({ username, email, age, middle_name });
     
-    await user.save().catch((error)=> {
-      console.log(error)
-      if (error.name === "ValidationError") {
-        return res.status(400).send("Invalid request");
-      }else {
-        return res.status(500).send("An error occured");
-      }
-    });
+    await user.save()
     res.json(user);
-  } catch (error) {
-    console.log("Error : ", error);
-    res.status(500).send("An error occured");
+  } catch (error: any) {
+    if (error.name === "ValidationError") {
+      return res.status(400).send(error.message);
+    }
+    res.status(500).send({error});
   }
 }
 
