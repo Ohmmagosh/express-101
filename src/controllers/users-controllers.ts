@@ -62,14 +62,13 @@ export async function deleteUser(req: any, res: any) {
 }
 
 export async function createUser(req: any, res: any) {
-  try {
-    
+  try {   
     const {
       username,
       email,
       age,
       middle_name,
-    }: { username: string; email: string; age: string; middle_name: string } =
+    }: { username: string; email: string; age: number; middle_name: string } =
       req.body;
     if (!username || !email || !age) {
       return res.status(400).send("Invalid request");
@@ -78,6 +77,7 @@ export async function createUser(req: any, res: any) {
     if (isExist) {
       return res.status(400).send("Username already exist");
     }
+
     const user = new Users({ username, email, age, middle_name });
 
     await user.save();
